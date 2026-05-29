@@ -8,7 +8,7 @@ import urllib.request
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HTML_FILE = ROOT / '01- site mvp.html'
+HTML_FILE = ROOT / 'index.html'
 ENV_FILE = Path(__file__).resolve().parent / '.env'
 ANALYTICS_FILE = Path(__file__).resolve().parent / 'analytics_events.jsonl'
 ANALYTICS_DASHBOARD = Path(__file__).resolve().parent / 'analytics_dashboard.html'

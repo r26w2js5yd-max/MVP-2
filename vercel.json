@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/01- site mvp.html"
+      "destination": "/index.html"
     },
     {
       "source": "/api/generate-plan",
