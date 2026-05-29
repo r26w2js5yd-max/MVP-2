@@ -7,11 +7,11 @@
     },
     {
       "source": "/api/generate-plan",
-      "destination": "api/generate-plan.py"
+      "destination": "/api/generate-plan.py"
     },
     {
       "source": "/api/track",
-      "destination": "api/track.py"
+      "destination": "/api/track.py"
     }
   ]
 }
