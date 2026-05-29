@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Workout Plan Generator</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #000000;
+      --surface: rgba(6, 10, 16, 0.84);
+      --surface-2: rgba(10, 14, 20, 0.92);
+      --text: #ffffff;
+      --muted: #b8c4d1;
+      --accent: #1aa6ff;
+      --accent-2: #0a8fff;
+      --accent-strong: #006dff;
+      --border: rgba(26, 166, 255, 0.24);
+      --border-soft: rgba(255,255,255,0.08);
+      --shadow: 0 24px 60px rgba(0,0,0,0.52);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(26, 166, 255, 0.22), transparent 28%),
+        linear-gradient(180deg, #000000 0%, #02070f 100%);
+      color: var(--text);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      filter: brightness(0.86) contrast(1.03) saturate(1.08);
+    }
+
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.68)),
+        radial-gradient(circle at center, rgba(26, 166, 255, 0.12), transparent 26%);
+      pointer-events: none;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    .intro-view {
+      display: block;
+    }
+
+    .intro-view header {
+      min-height: 68vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 30px 26px;
+      margin-bottom: 24px;
+      background:
+        linear-gradient(180deg, rgba(10, 14, 20, 0.92), rgba(0, 0, 0, 0.88)),
+        rgba(255,255,255,0.02);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 9px 13px;
+      margin-bottom: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(26, 166, 255, 0.3);
+      background: rgba(7, 12, 18, 0.74);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.04),
+        0 12px 30px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(6px);
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: contain;
+      padding: 3px;
+      background:
+        linear-gradient(180deg, rgba(26, 166, 255, 0.22), rgba(3, 8, 13, 0.88));
+      border: 1px solid rgba(26, 166, 255, 0.38);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 10px 24px rgba(26, 166, 255, 0.24);
+      filter:
+        brightness(1.08)
+        saturate(1.12)
+        drop-shadow(0 0 10px rgba(26, 166, 255, 0.22));
+    }
+
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .brand-kicker {
+      margin: 0;
+      color: #8bd0ff;
+      font-size: 0.55rem;
+      line-height: 1;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .brand-name {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.05rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-subtitle {
+      margin: 0;
+      color: rgba(255,255,255,0.68);
+      font-size: 0.62rem;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .intro-view .eyebrow {
+      margin-bottom: 0;
+    }
+
+    .intro-view h1 {
+      max-width: 760px;
+      margin-bottom: 0;
+    }
+
+    .intro-view .lead {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .intro-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .intro-start-btn {
+      border: none;
+      outline: none;
+      border-radius: 999px;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 10px 30px rgba(0, 109, 255, 0.36);
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+      min-width: 240px;
+    }
+
+    .quiz-view.hidden,
+    .intro-view.hidden {
+      display: none;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2.4rem, 3vw, 3.4rem);
+      letter-spacing: -0.05em;
+    }
+
+    p.lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .progress-panel {
+      position: sticky;
+      top: 14px;
+      z-index: 5;
+      background: rgba(4, 8, 12, 0.88);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+      border-radius: 20px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.03),
+        var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-title {
+      font-size: 0.95rem;
+      margin: 0;
+      color: var(--text);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .progress-step-copy {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .step-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(26, 166, 255, 0.14);
+      border: 1px solid rgba(26, 166, 255, 0.28);
+      color: #9dd6ff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .step-copy {
+      color: #fffdf8;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .step-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong), var(--accent-2));
+      box-shadow: 0 0 18px rgba(0, 109, 255, 0.34);
+      transition: width 0.35s ease;
+    }
+
+    .questions {
+      display: grid;
+      gap: 22px;
+    }
+
+    .question-card {
+      display: none;
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid rgba(26, 166, 255, 0.22);
+      background:
+        linear-gradient(180deg, rgba(8, 10, 14, 0.96), rgba(3, 5, 9, 0.84)),
+        rgba(255,255,255,0.02);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.04),
+        0 16px 36px rgba(0,0,0,0.32);
+      backdrop-filter: blur(4px);
+      animation: fadeInCard 0.28s ease;
+    }
+
+    .question-card.active {
+      display: block;
+    }
+
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.16rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .question-card h2 span {
+      color: #ffffff;
+      font-weight: 800;
+      min-width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+      border-radius: 999px;
+      box-shadow: 0 0 14px rgba(0, 109, 255, 0.34);
+    }
+
+    .question-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .mini-progress {
+      height: 8px;
+      width: 100%;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .mini-progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong), var(--accent-2));
+      box-shadow: 0 0 14px rgba(14, 185, 255, 0.24);
+      transition: width 0.25s ease;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(103, 244, 212, 0.12);
+      background: rgba(4, 8, 14, 0.68);
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(103, 244, 212, 0.42);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.24);
+    }
+
+    .option input {
+      margin-top: 4px;
+      accent-color: var(--accent);
+    }
+
+    .option label {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+
+    .loading-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top, rgba(246, 185, 59, 0.16), transparent 25%),
+        linear-gradient(180deg, #070b10 0%, #04070b 100%);
+    }
+
+    .loading-card {
+      max-width: 520px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 30px;
+      text-align: center;
+      background: rgba(6, 9, 12, 0.88);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.04),
+        0 20px 54px rgba(0,0,0,0.34);
+      backdrop-filter: blur(6px);
+    }
+
+    .spinner {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 18px;
+      border-radius: 999px;
+      border: 4px solid rgba(255,255,255,0.12);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .result-page {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .result-header {
+      margin-bottom: 20px;
+    }
+
+    .result-header h1 {
+      margin: 10px 0 8px;
+      font-size: clamp(2rem, 4.8vw, 3.2rem);
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .result-card {
+      padding: 24px;
+      border-radius: 30px;
+      border: 1px solid rgba(26, 166, 255, 0.2);
+      background:
+        linear-gradient(180deg, rgba(6, 9, 12, 0.94), rgba(0, 0, 0, 0.84)),
+        rgba(255,255,255,0.02);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.03),
+        var(--shadow);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 12px 15px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      color: #ffffff;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+      box-shadow: 0 10px 28px rgba(0, 109, 255, 0.32);
+    }
+
+    .secondary-btn {
+      color: #ffffff;
+      background: rgba(8, 12, 18, 0.78);
+      border: 1px solid rgba(26, 166, 255, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 26px;
+      border: 1px solid rgba(26, 166, 255, 0.18);
+      background:
+        linear-gradient(180deg, rgba(8, 11, 15, 0.95), rgba(6, 9, 12, 0.82)),
+        rgba(255,255,255,0.02);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+
+    .section-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-block h2 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .section-block p {
+      margin: 0;
+    }
+
+    .section-copy {
+      margin: 0;
+      color: rgba(248,249,251,0.72);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .summary-stat-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 14px 15px;
+      border-radius: 20px;
+      background: rgba(4, 8, 12, 0.82);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-label {
+      margin: 0;
+      color: rgba(255,255,255,0.62);
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+
+    .summary-value {
+      margin: 0;
+      color: #fffdf8;
+      font-size: 1.02rem;
+      font-weight: 800;
+    }
+
+    .summary-note {
+      margin: 0;
+      padding: 13px 14px;
+      border-radius: 18px;
+      background: rgba(26, 166, 255, 0.09);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+      color: #d1ebff;
+      font-size: 0.94rem;
+      line-height: 1.5;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .overview-day-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 15px;
+      border-radius: 20px;
+      background: rgba(4, 8, 12, 0.82);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .overview-day-card .day-name {
+      margin: 0;
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 800;
+    }
+
+    .overview-day-card .day-focus {
+      margin: 0;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .overview-day-card .day-duration {
+      margin: 0;
+      color: #9dd6ff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .day-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 17px;
+      border-radius: 24px;
+      border: 1px solid rgba(26, 166, 255, 0.2);
+      background:
+        linear-gradient(180deg, rgba(7, 10, 13, 0.96), rgba(4, 7, 10, 0.84)),
+        rgba(255,255,255,0.02);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .day-card.expanded {
+      border-color: rgba(26, 166, 255, 0.38);
+      box-shadow:
+        inset 0 0 0 1px rgba(26, 166, 255, 0.24),
+        0 20px 40px rgba(0,0,0,0.26);
+    }
+
+    .day-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .day-card-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .day-card-copy h3 {
+      margin: 0;
+      font-size: 1.06rem;
+    }
+
+    .day-card-subcopy {
+      margin: 0;
+      color: rgba(248,249,251,0.72);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .day-card-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .duration-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: rgba(26, 166, 255, 0.12);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+      color: #9dd6ff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .day-card-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(26, 166, 255, 0.26);
+      background: rgba(26, 166, 255, 0.12);
+      color: #cfe9ff;
+      padding: 8px 10px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .day-panel {
+      display: grid;
+      gap: 12px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: max-height 0.28s ease, opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    .day-card.expanded .day-panel {
+      max-height: 700px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .detail-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 13px;
+      border-radius: 18px;
+      background: rgba(5, 8, 12, 0.86);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .detail-label {
+      margin: 0;
+      color: #9dd6ff;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+
+    .detail-copy {
+      margin: 0;
+      color: rgba(248,249,251,0.82);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .exercise-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .exercise-list-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(8, 12, 16, 0.86);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .exercise-name {
+      color: #fffdf8;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .exercise-meta {
+      color: #9dd6ff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .notes-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      color: rgba(248,249,251,0.78);
+      line-height: 1.42;
+      font-size: 0.9rem;
+    }
+
+    .personalization-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: rgba(248,249,251,0.82);
+      line-height: 1.5;
+      font-size: 0.93rem;
+    }
+
+    .progression-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px 15px;
+      border-radius: 20px;
+      background: rgba(26, 166, 255, 0.1);
+      border: 1px solid rgba(26, 166, 255, 0.24);
+    }
+
+    .section-kicker {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 800;
+    }
+
+.warning-text {
+      margin-top: 14px;
+      color: #ffd36f;
+      margin-bottom: 0;
+    }
+
+    .source-text {
+      margin-top: 10px;
+      color: rgba(255,255,255,0.66);
+      font-size: 0.78rem;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 24px 16px 60px;
+      }
+
+      .question-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="video-bg" aria-hidden="true">
+    <video autoplay muted loop playsinline>
+      <source src="assets/videos/training-bg.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-overlay" aria-hidden="true"></div>
+
+  <div class="page">
+    <section class="intro-view" id="introView" aria-label="Intro">
+      <header>
+        <div class="brand-lockup" aria-label="ActivaeFit brand">
+          <img class="brand-logo" src="backend/assets/logo/Copilot_20260529_123156.png" alt="ActivaeFit logo" />
+          <div class="brand-copy">
+            <p class="brand-kicker">Powered by</p>
+            <p class="brand-name">ActivaeFit</p>
+            <p class="brand-subtitle">Workout planning</p>
+          </div>
+        </div>
+        <div class="eyebrow">100% free</div>
+        <h1>ActivaeFit</h1>
+        <p class="lead">Answer a few quick questions and get a custom workout plan that’s easy to understand, built for your goals, and ready to use.</p>
+        <div class="intro-actions">
+          <button type="button" class="intro-start-btn" id="startQuizBtn">Start making your plan</button>
+        </div>
+      </header>
+    </section>
+
+    <section class="quiz-view hidden" id="quizView" aria-label="Questionnaire">
+      <div class="progress-panel">
+        <div class="progress-title">Progress: <span id="answeredCount">0</span> / 10 answered</div>
+        <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
+        <div class="progress-step-copy">
+          <div class="step-pill">Current step</div>
+          <div class="step-copy" id="currentStepLabel">Question 1 of 10</div>
+        </div>
+        <p class="step-note" id="questionStepNote">Pick an answer to move forward.</p>
+      </div>
+
+      <form id="planForm" class="questions">
+      <div class="question-card" data-question="1">
+        <h2><span>1</span> Training goal</h2>
+        <p>What is your primary goal?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q1" value="Build muscle" /><span>Build muscle</span></label>
+          <label class="option"><input type="radio" name="q1" value="Lose fat" /><span>Lose fat</span></label>
+          <label class="option"><input type="radio" name="q1" value="Improve strength" /><span>Improve strength</span></label>
+          <label class="option"><input type="radio" name="q1" value="Improve endurance" /><span>Improve endurance</span></label>
+          <label class="option"><input type="radio" name="q1" value="General fitness" /><span>General fitness</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="2">
+        <h2><span>2</span> Experience level</h2>
+        <p>How experienced are you?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q2" value="Beginner" /><span>Beginner</span></label>
+          <label class="option"><input type="radio" name="q2" value="Lower-intermediate" /><span>Lower-intermediate</span></label>
+          <label class="option"><input type="radio" name="q2" value="Intermediate" /><span>Intermediate</span></label>
+          <label class="option"><input type="radio" name="q2" value="Advanced" /><span>Advanced</span></label>
+          <label class="option"><input type="radio" name="q2" value="Athlete" /><span>Athlete</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="3">
+        <h2><span>3</span> Training frequency</h2>
+        <p>How many days per week can you train?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q3" value="2 days" /><span>2 days</span></label>
+          <label class="option"><input type="radio" name="q3" value="3 days" /><span>3 days</span></label>
+          <label class="option"><input type="radio" name="q3" value="4 days" /><span>4 days</span></label>
+          <label class="option"><input type="radio" name="q3" value="5 days" /><span>5 days</span></label>
+          <label class="option"><input type="radio" name="q3" value="6–7 days" /><span>6–7 days</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="4">
+        <h2><span>4</span> Available equipment</h2>
+        <p>What equipment do you have?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q4" value="Full gym" /><span>Full gym</span></label>
+          <label class="option"><input type="radio" name="q4" value="Dumbbells only" /><span>Dumbbells only</span></label>
+          <label class="option"><input type="radio" name="q4" value="Bodyweight only" /><span>Bodyweight only</span></label>
+          <label class="option"><input type="radio" name="q4" value="Home gym (bench + barbell)" /><span>Home gym (bench + barbell)</span></label>
+          <label class="option"><input type="radio" name="q4" value="Resistance bands" /><span>Resistance bands</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="5">
+        <h2><span>5</span> Injury limitations</h2>
+        <p>Do you have any limitations?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q5" value="None" /><span>None</span></label>
+          <label class="option"><input type="radio" name="q5" value="Knees" /><span>Knees</span></label>
+          <label class="option"><input type="radio" name="q5" value="Lower back" /><span>Lower back</span></label>
+          <label class="option"><input type="radio" name="q5" value="Shoulders" /><span>Shoulders</span></label>
+          <label class="option"><input type="radio" name="q5" value="Other" /><span>Other</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="6">
+        <h2><span>6</span> Preferred training style</h2>
+        <p>What style do you prefer?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q6" value="Traditional strength training" /><span>Traditional strength training</span></label>
+          <label class="option"><input type="radio" name="q6" value="Hypertrophy/bodybuilding" /><span>Hypertrophy/bodybuilding</span></label>
+          <label class="option"><input type="radio" name="q6" value="CrossFit-style" /><span>CrossFit-style</span></label>
+          <label class="option"><input type="radio" name="q6" value="Calisthenics" /><span>Calisthenics</span></label>
+          <label class="option"><input type="radio" name="q6" value="Mixed" /><span>Mixed</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="7">
+        <h2><span>7</span> Session length</h2>
+        <p>How long do you want each session to be?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q7" value="20 minutes" /><span>20 minutes</span></label>
+          <label class="option"><input type="radio" name="q7" value="30 minutes" /><span>30 minutes</span></label>
+          <label class="option"><input type="radio" name="q7" value="45 minutes" /><span>45 minutes</span></label>
+          <label class="option"><input type="radio" name="q7" value="60 minutes" /><span>60 minutes</span></label>
+          <label class="option"><input type="radio" name="q7" value="75+ minutes" /><span>75+ minutes</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="8">
+        <h2><span>8</span> Cardio preference</h2>
+        <p>What type of cardio do you prefer?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q8" value="None" /><span>None</span></label>
+          <label class="option"><input type="radio" name="q8" value="Walking" /><span>Walking</span></label>
+          <label class="option"><input type="radio" name="q8" value="Running" /><span>Running</span></label>
+          <label class="option"><input type="radio" name="q8" value="HIIT" /><span>HIIT</span></label>
+          <label class="option"><input type="radio" name="q8" value="Cycling" /><span>Cycling</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="9">
+        <h2><span>9</span> Motivation style</h2>
+        <p>What keeps you motivated?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q9" value="Short workouts" /><span>Short workouts</span></label>
+          <label class="option"><input type="radio" name="q9" value="Visible progress" /><span>Visible progress</span></label>
+          <label class="option"><input type="radio" name="q9" value="Variety" /><span>Variety</span></label>
+          <label class="option"><input type="radio" name="q9" value="Routine" /><span>Routine</span></label>
+          <label class="option"><input type="radio" name="q9" value="Competition" /><span>Competition</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+      <div class="question-card" data-question="10">
+        <h2><span>10</span> Lifestyle constraints</h2>
+        <p>What describes your lifestyle?</p>
+        <div class="options">
+          <label class="option"><input type="radio" name="q10" value="Student" /><span>Student</span></label>
+          <label class="option"><input type="radio" name="q10" value="Full-time job" /><span>Full-time job</span></label>
+          <label class="option"><input type="radio" name="q10" value="Physically demanding job" /><span>Physically demanding job</span></label>
+          <label class="option"><input type="radio" name="q10" value="Parent with limited time" /><span>Parent with limited time</span></label>
+          <label class="option"><input type="radio" name="q10" value="Shift worker" /><span>Shift worker</span></label>
+        </div>
+        <div class="mini-progress"><span></span></div>
+      </div>
+
+    </form>
+    </section>
+  </div>
+
+  <script>
+    const form = document.getElementById('planForm');
+    const overallProgress = document.getElementById('overallProgress');
+    const answeredCountLabel = document.getElementById('answeredCount');
+    const currentStepLabel = document.getElementById('currentStepLabel');
+    const questionStepNote = document.getElementById('questionStepNote');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const introView = document.getElementById('introView');
+    const quizView = document.getElementById('quizView');
+    const questionCards = document.querySelectorAll('.question-card');
+
+    let currentQuestionIndex = 0;
+    let isGenerating = false;
+    let lastAnswers = [];
+    let generatedPlanText = '';
+    let generatedWarning = '';
+    let generatedSource = '';
+
+    const trackingStateKey = 'workout_generator_tracking_state';
+    const analyticsState = (() => {
+      const stored = localStorage.getItem(trackingStateKey);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (error) {
+          localStorage.removeItem(trackingStateKey);
+        }
+      }
+
+      return {
+        sessionId: (crypto.randomUUID ? crypto.randomUUID() : `session-${Math.random().toString(36).slice(2, 10)}`),
+        onboardingStarted: false,
+        onboardingCompleted: false,
+        planAttempted: false,
+        planViewed: false,
+        returnVisitTracked: false,
+        answeredCount: 0,
+        lastTrackedPage: 'landing'
+      };
+    })();
+
+    function persistTrackingState() {
+      localStorage.setItem(trackingStateKey, JSON.stringify(analyticsState));
+    }
+
+    function trackEvent(eventName, properties = {}) {
+      const payload = {
+        event: eventName,
+        timestamp: new Date().toISOString(),
+        session_id: analyticsState.sessionId,
+        properties: {
+          ...properties,
+          page: document.body ? document.body.dataset.analyticsPage || 'unknown' : 'unknown'
+        }
+      };
+
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+          navigator.sendBeacon('/api/track', blob);
+        }
+      } catch (error) {
+        // ignore beacon failures since fetch fallback handles delivery
+      }
+
+      fetch('/api/track', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {});
+
+      persistTrackingState();
+    }
+
+    function setAnalyticsPage(pageName) {
+      document.body.dataset.analyticsPage = pageName;
+      analyticsState.lastTrackedPage = pageName;
+      persistTrackingState();
+    }
+
+    function hydrateReturnTracking() {
+      const priorPlanViewed = localStorage.getItem('workout_generator_plan_viewed') === 'true';
+      const sessionReturnSent = sessionStorage.getItem('workout_generator_return_visit_sent') === 'true';
+
+      if (priorPlanViewed && !sessionReturnSent) {
+        trackEvent('return_visit', { source: 'repeat_browser' });
+        sessionStorage.setItem('workout_generator_return_visit_sent', 'true');
+      }
+    }
+
+    persistTrackingState();
+    hydrateReturnTracking();
+    trackEvent('page_view', { page: 'landing' });
+    setAnalyticsPage('landing');
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeCsv(value) {
+      const needsQuotes = /[",\n]/.test(value);
+      const escaped = value.replace(/"/g, '""');
+      return needsQuotes ? `"${escaped}"` : escaped;
+    }
+
+    function downloadFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    }
+
+    function buildOverview(answers) {
+      const goal = answers.find(item => item.question.includes('Training goal'))?.answer || 'your goal';
+      const experience = answers.find(item => item.question.includes('Experience level'))?.answer || 'your experience';
+      const limitations = answers.find(item => item.question.includes('Injury limitations'))?.answer || 'no specific limitation';
+      const trainingStyle = answers.find(item => item.question.includes('Preferred training style'))?.answer || 'your preferred style';
+      const equipment = answers.find(item => item.question.includes('Available equipment'))?.answer || 'your equipment';
+      const frequency = answers.find(item => item.question.includes('Training frequency'))?.answer || 'your training schedule';
+      const sessionLength = answers.find(item => item.question.includes('Session length'))?.answer || 'your session length';
+      const cardio = answers.find(item => item.question.includes('Cardio preference'))?.answer || 'your cardio preference';
+      const motivation = answers.find(item => item.question.includes('Motivation style'))?.answer || 'your motivation style';
+
+      return [
+        `Who they are: You are an ${experience.toLowerCase()} lifter with ${frequency.toLowerCase()}, ${sessionLength.toLowerCase()}, and a routine supported by ${equipment.toLowerCase()}.`,
+        `Their goals: You want to work toward ${goal.toLowerCase()}.`,
+        `Their experience level: ${experience}.`,
+        `Their limitations: ${limitations}.`,
+        `Their preferences: You like ${trainingStyle.toLowerCase()}, ${cardio.toLowerCase()} cardio, and staying motivated with ${motivation.toLowerCase()}.`
+      ];
+    }
+
+    function buildSummaryText(answers) {
+      const goal = answers.find(item => item.question.includes('Training goal'))?.answer || 'your goal';
+      const experience = answers.find(item => item.question.includes('Experience level'))?.answer || 'your experience';
+      const equipment = answers.find(item => item.question.includes('Available equipment'))?.answer || 'your equipment';
+      const trainingStyle = answers.find(item => item.question.includes('Preferred training style'))?.answer || 'your preferred style';
+      const sessionLength = answers.find(item => item.question.includes('Session length'))?.answer || 'your session length';
+      const frequency = answers.find(item => item.question.includes('Training frequency'))?.answer || 'your training schedule';
+      const limitations = answers.find(item => item.question.includes('Injury limitations'))?.answer || 'no specific limitations';
+
+      return [
+        `- Experience level: ${experience.toLowerCase()}`,
+        `- Goals: ${goal.toLowerCase()}`,
+        `- Equipment: ${equipment.toLowerCase()}`,
+        `- Time available: ${frequency.toLowerCase()} with ${sessionLength.toLowerCase()}`,
+        `- Training style: ${trainingStyle.toLowerCase()}`,
+        `- Any limitations: ${limitations.toLowerCase()}`
+      ].join('\n');
+    }
+
+    function buildProgramOverviewText(answers, planDays) {
+      const trainingStyle = answers.find(item => item.question.includes('Preferred training style'))?.answer || 'your preferred style';
+      const frequency = answers.find(item => item.question.includes('Training frequency'))?.answer || 'your training schedule';
+      const sessionLength = answers.find(item => item.question.includes('Session length'))?.answer || 'your session length';
+      const limitations = answers.find(item => item.question.includes('Injury limitations'))?.answer || 'no specific limitations';
+      const cardio = answers.find(item => item.question.includes('Cardio preference'))?.answer || 'your cardio preference';
+
+      const scheduleLines = (planDays || []).slice(0, 6).map((day, index) => `Day ${index + 1} = ${inferDayFocus(day.title)}`);
+      const weeklySchedule = scheduleLines.length > 0
+        ? `Weekly schedule\n- ${scheduleLines.join(', ')}`
+        : `Weekly schedule\n- ${frequency.toLowerCase()} sessions with ${sessionLength.toLowerCase()} blocks.`;
+
+      return [
+        weeklySchedule,
+        `Training style\n- The plan follows ${trainingStyle.toLowerCase()} with steady volume and controlled intensity.\n- Cardio is kept in line with ${cardio.toLowerCase()} so your sessions stay balanced.`,
+        `Progression\n- Progress by adding load, reps, or time as your form stays solid.\n- Keep effort moderate early and build up week by week.`,
+        `Recovery notes\n- Use recovery time, mobility, and rest days to protect consistency.\n- ${limitations.toLowerCase()} should be respected by keeping sessions easy to recover from.`
+      ].join('\n\n');
+    }
+
+    function inferDayFocus(title) {
+      const normalized = title.toLowerCase();
+
+      if (normalized.includes('push')) return 'Push';
+      if (normalized.includes('pull')) return 'Pull';
+      if (normalized.includes('leg')) return 'Legs';
+      if (normalized.includes('upper')) return 'Upper Body';
+      if (normalized.includes('lower')) return 'Lower Body';
+      if (normalized.includes('full')) return 'Full Body';
+      if (normalized.includes('core')) return 'Core';
+      if (normalized.includes('cardio')) return 'Conditioning';
+
+      return 'Mixed';
+    }
+
+    function inferFocusExplanation(focus, day) {
+      const title = day.title || focus;
+      const normalized = title.toLowerCase();
+
+      if (normalized.includes('push')) {
+        return 'This day builds upper-body pressing strength with compound work first, then supporting volume to reinforce the chest, shoulders, and triceps.';
+      }
+
+      if (normalized.includes('pull')) {
+        return 'This pull-focused day prioritizes back and biceps work, helping balance pressing volume and improve posture through rowing and pulling patterns.';
+      }
+
+      if (normalized.includes('leg')) {
+        return 'Leg work here focuses on lower-body strength, force production, and leg durability with a mix of squat, hinge, and single-leg work.';
+      }
+
+      if (normalized.includes('full')) {
+        return 'Full-body training keeps movement quality high across multiple patterns, making this day efficient for strength and conditioning.';
+      }
+
+      if (normalized.includes('cardio')) {
+        return 'This day is built around conditioning, work capacity, and recovery so cardiovascular fitness supports the rest of the week.';
+      }
+
+      if (normalized.includes('core')) {
+        return 'Core work here supports posture, stability, and trunk strength so other lifts feel more controlled and resilient.';
+      }
+
+      return `This ${focus.toLowerCase()} day keeps the session aligned with the generated focus so the week feels organized and purposeful.`;
+    }
+
+    function buildInteractivePlanMarkup(planDays) {
+      const limitedDays = planDays.slice(0, 7);
+
+      if (limitedDays.length === 0) {
+        return `
+          <article class="plan-day-shell is-visible">
+            <div class="plan-day-top">
+              <div class="plan-day-heading">
+                <p class="plan-day-number">Day 1</p>
+                <h2>Full Body</h2>
+              </div>
+              <p class="plan-day-summary">A simple full-body day with balanced strength and conditioning.</p>
+            </div>
+            <div class="plan-day-reveal">
+              <div class="plan-day-explanation">
+                <p class="reveal-title">Why this day works</p>
+                <p class="reveal-copy">This day keeps the week simple and balanced with broad movement patterns and steady work capacity.</p>
+              </div>
+              <div class="plan-day-exercise-list">
+                <div class="exercise-list-header">
+                  <span>Exercise flow</span>
+                  <span>Scroll to read</span>
+                </div>
+                <ul class="plan-exercise-list">
+                  <li class="plan-exercise-item"><span class="exercise-name">Squat — 4x8</span><span class="exercise-meta">Strength</span></li>
+                  <li class="plan-exercise-item"><span class="exercise-name">Bench Press — 4x8</span><span class="exercise-meta">Strength</span></li>
+                </ul>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      return limitedDays.map((day) => {
+        const focus = inferDayFocus(day.title);
+        const explanation = inferFocusExplanation(focus, day);
+        const summary = focus === 'Push'
+          ? 'Pressing-focused work to build upper-body strength and variety.'
+          : focus === 'Pull'
+            ? 'Pull-focused work to balance pressing volume and build back strength.'
+            : focus === 'Legs'
+              ? 'Lower-body strength and durability with controlled loading.'
+              : focus === 'Full Body'
+                ? 'Balanced full-body work that keeps the week efficient and consistent.'
+                : focus === 'Conditioning'
+                  ? 'Cardio and work-capacity work to keep recovery and endurance strong.'
+                  : 'A focused day built around the generated workout theme and recovery needs.';
+
+        const exerciseItems = day.exercises.length > 0
+          ? day.exercises.map((exercise) => `<li class="plan-exercise-item"><span class="exercise-name">${escapeHtml(exercise)}</span><span class="exercise-meta">Workout</span></li>`).join('')
+          : (day.notes.length > 0 ? day.notes.map((note) => `<li class="plan-exercise-item"><span class="exercise-name">${escapeHtml(note)}</span><span class="exercise-meta">Note</span></li>`).join('') : '<li class="plan-exercise-item"><span class="exercise-name">No exercise details listed yet.</span><span class="exercise-meta">Plan</span></li>');
+
+        return `
+          <article class="plan-day-shell" data-day-number="${day.dayNumber}">
+            <div class="plan-day-top">
+              <div class="plan-day-heading">
+                <p class="plan-day-number">Day ${day.dayNumber}</p>
+                <h2>${escapeHtml(focus)}</h2>
+              </div>
+              <p class="plan-day-summary">${escapeHtml(summary)}</p>
+              <div class="plan-day-pills">
+                <span class="day-pill">${escapeHtml(focus)}</span>
+                <span class="day-pill">Scroll to reveal</span>
+              </div>
+            </div>
+            <div class="plan-day-reveal">
+              <div class="plan-day-explanation">
+                <p class="reveal-title">Why this day looks like this</p>
+                <p class="reveal-copy">${escapeHtml(explanation)}</p>
+              </div>
+              <div class="plan-day-exercise-list">
+                <div class="exercise-list-header">
+                  <span>Exercise flow</span>
+                  <span>Reveal on scroll</span>
+                </div>
+                <ul class="plan-exercise-list">${exerciseItems}</ul>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function buildDownloadText() {
+      const parsedPlan = parseGeneratedPlan(generatedPlanText).map((day, index) => ({
+        ...day,
+        dayNumber: index + 1
+      }));
+      const summary = buildSummaryMetrics(lastAnswers);
+
+      const topSummary = [
+        'TOP SUMMARY',
+        `Primary Goal: ${summary.goal}`,
+        `Experience Level: ${summary.experience}`,
+        `Training Frequency: ${summary.frequency}`,
+        `Workout Duration: ${summary.duration}`,
+        `Main Focus Areas: ${summary.focusAreas.join(' + ')}`,
+        `AI Summary: ${buildSummarySentence(summary)}`
+      ];
+
+      const weeklyOverview = [
+        'WEEKLY OVERVIEW',
+        ...parsedPlan.map(day => `- ${day.dayName}: ${day.focus} — ${day.duration}`)
+      ];
+
+      const workoutDays = [
+        'EXPANDABLE WORKOUT DAYS',
+        ...parsedPlan.map(day => [`${day.dayName} — ${day.focus}`, `Why this day exists: ${day.explanation}`, `Exercises: ${day.exercises.map((exercise) => `${exercise.name} (${exercise.detail})`).join(', ') || 'Recovery day'}`, `Coaching notes: ${day.notes.join(' | ')}`].join('\n'))
+      ];
+
+      const personalization = [
+        'WHY THIS PLAN FITS YOU',
+        `Your goal is ${summary.goal.toLowerCase()}, so the plan uses progressions and training emphasis that fit that outcome.`,
+        `You train ${summary.frequency.toLowerCase()}, so the weekly schedule stays efficient without overloading recovery.`,
+        `Your training style is ${summary.trainingStyle.toLowerCase()}, which keeps the structure aligned with how you prefer to train.`,
+        `Your recovery needs are handled with ${summary.cardio.toLowerCase()} conditioning and controlled volume, which helps make the plan sustainable.`,
+        summary.limitation.toLowerCase() !== 'none'
+          ? `You noted ${summary.limitation.toLowerCase()} limitations, so the plan keeps intensity manageable and recovery-focused.`
+          : 'You have no major limitation noted, so the plan can stay progression-based and steady.'
+      ];
+
+      const progression = [
+        'PROGRESSION',
+        'When you complete the target reps with good form for two sessions in a row, add a small amount of weight or a couple of reps. Keep the changes gradual so you can recover and keep improving.'
+      ];
+
+      return [
+        ...topSummary,
+        '',
+        ...weeklyOverview,
+        '',
+        ...workoutDays,
+        '',
+        ...personalization,
+        '',
+        ...progression
+      ].join('\n');
+    }
+
+    async function generatePlan() {
+      if (isGenerating) {
+        return;
+      }
+
+      isGenerating = true;
+      analyticsState.planAttempted = true;
+      trackEvent('plan_generation_attempt', {
+        answer_count: questionCards.length,
+        source: 'quiz_submit'
+      });
+      persistTrackingState();
+
+      lastAnswers = Array.from(questionCards).map(card => ({
+        question: card.querySelector('h2').textContent.replace(/\d+/, '').trim(),
+        answer: card.querySelector('input[type="radio"]:checked')?.value || 'No answer'
+      }));
+
+      renderLoadingPage();
+
+      try {
+        const response = await fetch('/api/generate-plan', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ answers: lastAnswers })
+        });
+
+        const data = await response.json();
+        generatedPlanText = data.plan || '';
+        generatedWarning = data.warning || '';
+        generatedSource = data.source || '';
+
+        if (generatedPlanText) {
+          trackEvent('plan_generation_success', {
+            source: generatedSource || 'unknown',
+            warning: Boolean(generatedWarning)
+          });
+        } else {
+          trackEvent('plan_generation_failure', {
+            source: generatedSource || 'unknown',
+            warning: Boolean(generatedWarning)
+          });
+        }
+
+        isGenerating = false;
+        renderDetailedResultsPage();
+      } catch (error) {
+        trackEvent('plan_generation_failure', {
+          source: 'network_error'
+        });
+
+        document.body.innerHTML = `
+          <div class="loading-page">
+            <div class="loading-card">
+              <div class="spinner"></div>
+              <h1 style="margin:0 0 10px; font-size:1.9rem;">Something went wrong</h1>
+              <p style="margin:0; color:var(--muted); line-height:1.6;">There was a problem generating your plan. Please try again.</p>
+              <button class="primary-btn" id="retryBtn" style="margin-top:18px;">Try again</button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('retryBtn').addEventListener('click', () => {
+          location.reload();
+        });
+
+        isGenerating = false;
+      }
+    }
+
+    function renderLoadingPage() {
+      document.body.innerHTML = `
+        <div class="loading-page">
+          <div class="loading-card">
+            <div class="spinner"></div>
+            <h1 style="margin:0 0 10px; font-size:1.9rem;">Generating your plan...</h1>
+            <p style="margin:0; color:var(--muted); line-height:1.6;">Your customized workout plan is being prepared now. This can take a few seconds.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSummaryPage() {
+      renderDetailedResultsPage();
+    }
+
+    function resolveSequentialDayName(rawDayName, lastAssignedDayIndex, weekdayLabels) {
+      const normalizedDayName = rawDayName && weekdayLabels.includes(rawDayName) ? rawDayName : null;
+
+      if (normalizedDayName) {
+        const explicitIndex = weekdayLabels.indexOf(normalizedDayName);
+        if (explicitIndex < lastAssignedDayIndex) {
+          const nextIndex = (lastAssignedDayIndex + 1) % weekdayLabels.length;
+          return {
+            dayName: weekdayLabels[nextIndex],
+            assignedIndex: nextIndex
+          };
+        }
+
+        return {
+          dayName: normalizedDayName,
+          assignedIndex: explicitIndex
+        };
+      }
+
+      const nextIndex = (lastAssignedDayIndex + 1) % weekdayLabels.length;
+      return {
+        dayName: weekdayLabels[nextIndex],
+        assignedIndex: nextIndex
+      };
+    }
+
+    function parseGeneratedPlan(text) {
+      const rawLines = text
+        .split('\n')
+        .map(line => line.replace(/\*\*/g, '').replace(/\*/g, '').trim())
+        .filter(line => line.length > 0);
+
+      const weekdayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const days = [];
+      let currentDay = null;
+      let lastAssignedDayIndex = -1;
+
+      rawLines.forEach((line) => {
+        const weekdayHeader = line.match(/^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b[—:-]\s*(.+)$/i);
+        const dayNumberHeader = line.match(/^Day\s+(\d+)\b[—:-]\s*(.+)$/i);
+        const numberedHeader = line.match(/^\d+\.\s*(.+)$/i);
+
+        if (weekdayHeader || dayNumberHeader || numberedHeader) {
+          if (currentDay) {
+            days.push(currentDay);
+          }
+
+          const remainder = weekdayHeader ? weekdayHeader[2] : (dayNumberHeader ? dayNumberHeader[2] : numberedHeader[1]);
+          const durationMatch = remainder.match(/(\d+\s*(?:[-–]\s*\d+)?\s*min(?:utes?)?)/i);
+          const duration = durationMatch ? durationMatch[1].trim() : '';
+          const focus = remainder.replace(durationMatch ? durationMatch[0] : '', '').replace(/[—:-]\s*$/, '').trim();
+
+          const resolvedDay = resolveSequentialDayName(weekdayHeader ? weekdayHeader[1] : null, lastAssignedDayIndex, weekdayLabels);
+          lastAssignedDayIndex = resolvedDay.assignedIndex;
+
+          currentDay = {
+            dayNumber: days.length + 1,
+            dayName: resolvedDay.dayName,
+            focus: focus || 'Workout day',
+            duration: duration || '',
+            explanation: '',
+            exercises: [],
+            notes: [],
+            isRestDay: false
+          };
+          return;
+        }
+
+        if (!currentDay) {
+          const resolvedDay = resolveSequentialDayName(null, lastAssignedDayIndex, weekdayLabels);
+          lastAssignedDayIndex = resolvedDay.assignedIndex;
+
+          currentDay = {
+            dayNumber: days.length + 1,
+            dayName: resolvedDay.dayName,
+            focus: 'Daily plan',
+            duration: '',
+            explanation: '',
+            exercises: [],
+            notes: [],
+            isRestDay: false
+          };
+        }
+
+        const cleanLine = line.replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '').trim();
+
+        if (!cleanLine) {
+          return;
+        }
+
+        if (/^(rest|recovery|mobility|walk|sleep|deload)\b/i.test(cleanLine)) {
+          currentDay.notes.push(cleanLine);
+          currentDay.isRestDay = true;
+          return;
+        }
+
+        const exerciseMatch = cleanLine.match(/^(.+?)(?:\s*[—:-]\s+|\s+)(\d+\s*x\s*\d+.*|\d+\s*sets?\s+of\s*\d+.*|\d+\s*reps?.*)$/i);
+
+        if (exerciseMatch) {
+          currentDay.exercises.push({
+            name: exerciseMatch[1].trim(),
+            detail: exerciseMatch[2].trim()
+          });
+          currentDay.isRestDay = false;
+          return;
+        }
+
+        if (/^(this|it|the workout|this session|this day|this plan|to support|designed|keeps|focuses|prioritizes)/i.test(cleanLine) && !currentDay.explanation) {
+          currentDay.explanation = cleanLine;
+          return;
+        }
+
+        if (currentDay.exercises.length === 0 && !currentDay.explanation) {
+          currentDay.explanation = cleanLine;
+          return;
+        }
+
+        currentDay.notes.push(cleanLine);
+      });
+
+      if (currentDay) {
+        days.push(currentDay);
+      }
+
+      if (days.length === 0) {
+        days.push({
+          dayNumber: 1,
+          dayName: 'Monday',
+          focus: 'Daily plan',
+          duration: '45–60 min',
+          explanation: 'A balanced training day built around your goal.',
+          exercises: [],
+          notes: ['Keep intensity controlled and track recovery.'],
+          isRestDay: false
+        });
+      }
+
+      return days.map((day, index) => ({
+        ...day,
+        dayNumber: index + 1,
+        dayName: day.dayName || weekdayLabels[index % weekdayLabels.length],
+        focus: day.focus || 'Workout day',
+        duration: day.duration || '45–60 min',
+        explanation: day.explanation || 'This session is structured to fit your goal while keeping the workload manageable.',
+        exercises: Array.isArray(day.exercises) ? day.exercises : [],
+        notes: Array.isArray(day.notes) && day.notes.length > 0
+          ? day.notes
+          : (day.isRestDay ? ['Recovery day: keep movement light, restore energy, and prioritize mobility.'] : ['Keep intensity controlled and track recovery.'])
+      }));
+    }
+    function buildSummaryMetrics(answers) {
+      const goal = answers.find(item => item.question.toLowerCase().includes('training goal'))?.answer || 'General fitness';
+      const experience = answers.find(item => item.question.toLowerCase().includes('experience level'))?.answer || 'Intermediate';
+      const frequency = answers.find(item => item.question.toLowerCase().includes('training frequency'))?.answer || '3 days';
+      const duration = answers.find(item => item.question.toLowerCase().includes('session length'))?.answer || '45 minutes';
+      const equipment = answers.find(item => item.question.toLowerCase().includes('available equipment'))?.answer || 'Home gym';
+      const trainingStyle = answers.find(item => item.question.toLowerCase().includes('preferred training style'))?.answer || 'Mixed';
+      const cardio = answers.find(item => item.question.toLowerCase().includes('cardio preference'))?.answer || 'Walking';
+      const limitation = answers.find(item => item.question.toLowerCase().includes('injury limitations'))?.answer || 'None';
+      const lifestyle = answers.find(item => item.question.toLowerCase().includes('lifestyle constraints'))?.answer || 'Full-time job';
+
+      const focusAreas = [];
+      if (trainingStyle.toLowerCase().includes('hypertrophy')) focusAreas.push('Hypertrophy loading');
+      if (trainingStyle.toLowerCase().includes('strength')) focusAreas.push('Strength work');
+      if (cardio.toLowerCase() !== 'none') focusAreas.push(`${cardio} conditioning`);
+      if (goal.toLowerCase().includes('lose fat')) focusAreas.push('Fat-loss pacing');
+      if (goal.toLowerCase().includes('build muscle')) focusAreas.push('Muscle-building volume');
+      if (limitation.toLowerCase() !== 'none') focusAreas.push('Recovery-conscious pacing');
+
+      return {
+        goal,
+        experience,
+        frequency,
+        duration,
+        equipment,
+        trainingStyle,
+        cardio,
+        limitation,
+        lifestyle,
+        focusAreas: focusAreas.slice(0, 4)
+      };
+    }
+
+    function buildSummarySentence(summary) {
+      const goalText = summary.goal.toLowerCase();
+      const styleText = summary.trainingStyle.toLowerCase();
+      const frequencyText = summary.frequency.toLowerCase();
+      return `This ${frequencyText} plan leans into ${styleText} so you can pursue ${goalText} with steady volume, manageable conditioning, and recovery built into the week.`;
+    }
+
+    function buildSummaryMarkup(summary) {
+      const focusAreas = summary.focusAreas.length > 0 ? summary.focusAreas : ['Strength', 'Conditioning', 'Recovery'];
+
+      return `
+        <section class="section-block">
+          <div class="section-headline">
+            <div>
+              <p class="section-kicker">TOP SUMMARY</p>
+              <h2>Plan snapshot</h2>
+            </div>
+          </div>
+          <div class="summary-grid">
+            <article class="summary-stat-card"><p class="summary-label">Primary Goal</p><p class="summary-value">${escapeHtml(summary.goal)}</p></article>
+            <article class="summary-stat-card"><p class="summary-label">Experience Level</p><p class="summary-value">${escapeHtml(summary.experience)}</p></article>
+            <article class="summary-stat-card"><p class="summary-label">Training Frequency</p><p class="summary-value">${escapeHtml(summary.frequency)}</p></article>
+            <article class="summary-stat-card"><p class="summary-label">Workout Duration</p><p class="summary-value">${escapeHtml(summary.duration)}</p></article>
+            <article class="summary-stat-card" style="grid-column: 1 / span 2;"><p class="summary-label">Main Focus Areas</p><p class="summary-value">${escapeHtml(focusAreas.join(' + '))}</p></article>
+          </div>
+          <p class="summary-note">${escapeHtml(buildSummarySentence(summary))}</p>
+        </section>
+      `;
+    }
+
+    function buildWeeklyOverviewMarkup(parsedPlan) {
+      const overviewDays = parsedPlan.slice(0, 7);
+
+      return `
+        <section class="section-block">
+          <div class="section-headline">
+            <div>
+              <p class="section-kicker">WEEKLY SCHEDULE</p>
+              <h2>Weekly overview</h2>
+            </div>
+          </div>
+          <div class="overview-grid">
+            ${overviewDays.map((day) => `
+              <article class="overview-day-card">
+                <p class="day-name">${escapeHtml(day.dayName)}</p>
+                <p class="day-focus">${escapeHtml(day.focus)}</p>
+                <p class="day-duration">${escapeHtml(day.duration)}</p>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function buildDayCardsMarkup(parsedPlan) {
+      const dayCards = parsedPlan.slice(0, 7);
+
+      return `
+        <section class="section-block">
+          <div class="section-headline">
+            <div>
+              <p class="section-kicker">EXPANDABLE WORKOUT DAYS</p>
+              <h2>Workout day cards</h2>
+            </div>
+          </div>
+          <p class="section-copy">Tap a card to see the exercise flow, coaching notes, and why that day is in the plan.</p>
+          <div class="interactive-plan-stack">
+            ${dayCards.map((day, index) => `
+              <article class="day-card ${index === 0 ? 'expanded' : ''}" data-day-index="${index}">
+                <div class="day-card-header">
+                  <div class="day-card-copy">
+                    <p class="section-kicker">${escapeHtml(day.dayName)}</p>
+                    <h3>${escapeHtml(day.focus)}</h3>
+                    <p class="day-card-subcopy">${escapeHtml(day.explanation)}</p>
+                  </div>
+                  <div class="day-card-right">
+                    <span class="duration-chip">${escapeHtml(day.duration)}</span>
+                    <button class="day-card-toggle" type="button" aria-expanded="${index === 0 ? 'true' : 'false'}">${index === 0 ? 'Hide details' : 'Show details'}</button>
+                  </div>
+                </div>
+
+                <div class="day-panel">
+                  <div class="detail-group">
+                    <p class="detail-label">Why this day exists</p>
+                    <p class="detail-copy">${escapeHtml(day.explanation)}</p>
+                  </div>
+
+                  <div class="detail-group">
+                    <p class="detail-label">Exercise list</p>
+                    ${day.exercises.length > 0 ? `<ul class="exercise-list">${day.exercises.map((exercise) => `<li class="exercise-list-item"><span class="exercise-name">${escapeHtml(exercise.name)}</span><span class="exercise-meta">${escapeHtml(exercise.detail)}</span></li>`).join('')}</ul>` : `<p class="detail-copy">Recovery day: keep movement light, restore energy, and prioritize mobility.</p>`}
+                  </div>
+
+                  <div class="detail-group">
+                    <p class="detail-label">Coaching notes</p>
+                    <ul class="notes-list">${day.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join('')}</ul>
+                  </div>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function buildPersonalizationMarkup(summary) {
+      const bullets = [
+        `Your goal is ${summary.goal.toLowerCase()}, so the plan uses progressions and training emphasis that fit that outcome.`,
+        `You train ${summary.frequency.toLowerCase()}, so the weekly schedule stays efficient without overloading recovery.`,
+        `Your training style is ${summary.trainingStyle.toLowerCase()}, which keeps the structure aligned with how you prefer to train.`,
+        `Your recovery needs are handled with ${summary.cardio.toLowerCase()} conditioning and controlled volume, which helps make the plan sustainable.`,
+        summary.limitation.toLowerCase() !== 'none' ? `You noted ${summary.limitation.toLowerCase()} limitations, so the plan keeps intensity manageable and recovery-focused.` : 'You have no major limitation noted, so the plan can stay progression-based and steady.'
+      ];
+
+      return `
+        <section class="section-block">
+          <div class="section-headline">
+            <div>
+              <p class="section-kicker">WHY THIS PLAN FITS YOU</p>
+              <h2>Personalization notes</h2>
+            </div>
+          </div>
+          <ul class="personalization-list">
+            ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join('')}
+          </ul>
+        </section>
+      `;
+    }
+
+    function buildProgressionMarkup() {
+      return `
+        <section class="section-block">
+          <div class="section-headline">
+            <div>
+              <p class="section-kicker">PROGRESSION</p>
+              <h2>How to progress</h2>
+            </div>
+          </div>
+          <div class="progression-card">
+            <p class="section-copy">When you complete the target reps with good form for two sessions in a row, add a small amount of weight or a couple of reps. Keep the changes gradual so you can recover and keep improving.</p>
+          </div>
+        </section>
+      `;
+    }
+    function renderDetailedResultsPage() {
+      setAnalyticsPage('results');
+      analyticsState.planViewed = true;
+      localStorage.setItem('workout_generator_plan_viewed', 'true');
+      persistTrackingState();
+
+      if (!analyticsState.planViewedTracked) {
+        analyticsState.planViewedTracked = true;
+        trackEvent('plan_viewed', {
+          plan_days: parseGeneratedPlan(generatedPlanText).length,
+          source: generatedSource || 'unknown'
+        });
+      }
+
+      const rows = generatedPlanText
+        .split('\n')
+        .map(line => line.replace(/\*\*/g, '').replace(/\*/g, '').trim())
+        .filter(line => line.length > 0);
+
+      const csvContent = '\ufeffLine,Plan Entry\n' + rows.map((line, index) => `${index + 1},${escapeCsv(line)}`).join('\n');
+      const parsedPlan = parseGeneratedPlan(generatedPlanText);
+      const summary = buildSummaryMetrics(lastAnswers);
+      const summaryMarkup = buildSummaryMarkup(summary);
+      const overviewMarkup = buildWeeklyOverviewMarkup(parsedPlan);
+      const workoutMarkup = buildDayCardsMarkup(parsedPlan);
+      const personalizationMarkup = buildPersonalizationMarkup(summary);
+      const progressionMarkup = buildProgressionMarkup();
+      const downloadText = buildDownloadText();
+
+      document.body.innerHTML = `
+        <div class="result-page">
+          <div class="result-header">
+            <h1>Your weekly workout plan</h1>
+            <p class="lead">A coach-style weekly view with a clear snapshot, a scan-friendly schedule, and day-by-day breakdowns.</p>
+          </div>
+
+          <div class="result-card">
+            <div class="result-actions">
+              <button class="primary-btn" id="downloadTextBtn">Download as text</button>
+              <button class="secondary-btn" id="downloadCsvBtn">Download as CSV (Excel)</button>
+              <button class="secondary-btn" id="startOverBtn">Start over</button>
+            </div>
+
+            ${summaryMarkup}
+            ${overviewMarkup}
+            ${workoutMarkup}
+            ${personalizationMarkup}
+            ${progressionMarkup}
+
+            ${generatedWarning ? `<p class="warning-text">${escapeHtml(generatedWarning)}</p>` : ''}
+            ${generatedSource ? `<p class="source-text">Source: ${escapeHtml(generatedSource)}</p>` : ''}
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll('.day-card-toggle').forEach((button) => {
+        button.addEventListener('click', () => {
+          const dayCard = button.closest('.day-card');
+          const isExpanded = dayCard.classList.toggle('expanded');
+          button.textContent = isExpanded ? 'Hide details' : 'Show details';
+          button.setAttribute('aria-expanded', String(isExpanded));
+        });
+      });
+
+      document.getElementById('downloadTextBtn').addEventListener('click', () => {
+        trackEvent('plan_downloaded', { format: 'txt' });
+        downloadFile('workout-plan.txt', downloadText, 'text/plain;charset=utf-8');
+      });
+
+      document.getElementById('downloadCsvBtn').addEventListener('click', () => {
+        trackEvent('plan_downloaded', { format: 'csv' });
+        downloadFile('workout-plan.csv', csvContent, 'text/csv;charset=utf-8');
+      });
+
+      document.getElementById('startOverBtn').addEventListener('click', () => {
+        trackEvent('plan_restart', { source: 'results_page' });
+        location.reload();
+      });
+    }
+    function showCurrentQuestion() {
+      questionCards.forEach((card, index) => {
+        card.classList.toggle('active', index === currentQuestionIndex);
+        const mini = card.querySelector('.mini-progress span');
+        const filled = form.querySelector(`input[name="q${card.dataset.question}"]:checked`);
+        mini.style.width = filled ? '100%' : '0%';
+      });
+
+      const answeredCount = Array.from(form.querySelectorAll('input[type=radio]')).filter(input => input.checked).length;
+      currentStepLabel.textContent = `Question ${currentQuestionIndex + 1} of ${questionCards.length}`;
+
+      if (answeredCount === questionCards.length) {
+        questionStepNote.textContent = 'All answers are in — generating your plan now.';
+      } else if (currentQuestionIndex === questionCards.length - 1) {
+        questionStepNote.textContent = 'You’re on the last question — answer it to generate your plan.';
+      } else {
+        questionStepNote.textContent = 'Pick an answer to move to the next question.';
+      }
+    }
+
+    function updateProgress() {
+      const answers = Array.from(form.querySelectorAll('input[type=radio]'));
+      const answeredQuestions = new Set();
+
+      answers.forEach(input => {
+        if (input.checked) {
+          answeredQuestions.add(input.name);
+        }
+      });
+
+      const answeredCount = answeredQuestions.size;
+      const percent = Math.round((answeredCount / 10) * 100);
+      answeredCountLabel.textContent = answeredCount;
+      overallProgress.style.width = percent + '%';
+      showCurrentQuestion();
+    }
+
+    startQuizBtn.addEventListener('click', () => {
+      analyticsState.onboardingStarted = true;
+      trackEvent('onboarding_started', { source: 'intro_button' });
+      persistTrackingState();
+      introView.classList.add('hidden');
+      quizView.classList.remove('hidden');
+      quizView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    form.addEventListener('change', (event) => {
+      updateProgress();
+
+      const answeredCount = Array.from(form.querySelectorAll('input[type=radio]')).filter(input => input.checked).length;
+      analyticsState.answeredCount = answeredCount;
+      persistTrackingState();
+
+      const answeredInput = event.target;
+      if (answeredInput.name) {
+        trackEvent('question_answered', {
+          question: answeredInput.name,
+          answer: answeredInput.value,
+          answered_count: answeredCount
+        });
+      }
+
+      if (answeredCount === questionCards.length && !analyticsState.onboardingCompleted) {
+        analyticsState.onboardingCompleted = true;
+        trackEvent('onboarding_completed', { answered_count: answeredCount });
+        persistTrackingState();
+      }
+
+      if (answeredCount === questionCards.length && !isGenerating) {
+        generatePlan();
+      }
+
+      const activeCard = questionCards[currentQuestionIndex];
+      const activeAnswer = activeCard.querySelector('input[type="radio"]:checked');
+
+      if (event.target.closest('.question-card') === activeCard && activeAnswer && currentQuestionIndex < questionCards.length - 1) {
+        window.setTimeout(() => {
+          currentQuestionIndex += 1;
+          showCurrentQuestion();
+        }, 220);
+      }
+    });
+
+    window.addEventListener('pagehide', () => {
+      const answeredCount = Array.from(form.querySelectorAll('input[type=radio]')).filter(input => input.checked).length;
+      const completedGeneration = analyticsState.planViewed || analyticsState.planAttempted && generatedPlanText.length > 0;
+
+      if (answeredCount > 0 && !completedGeneration && !analyticsState.abandonmentTracked) {
+        analyticsState.abandonmentTracked = true;
+        trackEvent('onboarding_abandoned', {
+          answered_count: answeredCount,
+          progress: Math.round((answeredCount / questionCards.length) * 100)
+        });
+        persistTrackingState();
+      }
+    });
+
+    showCurrentQuestion();
+  </script>
+</body>
+</html>

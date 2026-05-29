@@ -1,0 +1,7 @@
+# Secrets
+.env
+
+# Local Data/Logs
+*.jsonl
+__pycache__/
+.DS_Store

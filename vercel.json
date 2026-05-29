@@ -1,0 +1,17 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/01- site mvp.html"
+    },
+    {
+      "source": "/api/generate-plan",
+      "destination": "api/generate-plan.py"
+    },
+    {
+      "source": "/api/track",
+      "destination": "api/track.py"
+    }
+  ]
+}
