@@ -24,7 +24,7 @@ def fallback_plan(prompt=""):
         "- Structure: full-body work on alternate days, keeping rest intervals around 60–90 seconds.",
         "- Progression: increase load or reps over time, aiming for steady improvement and good recovery.",
         "- Recovery: hydrate, sleep 7–9 hours, and keep mobility work short and consistent.",
-        "If you want, I can turn this into a 4-week schedule or add exercise selection by equipment."
+        "Note: The AI provider is currently unavailable. This is a high-quality template based on your goals."
     ]
     return '\n'.join(summary)
 

@@ -142,10 +142,11 @@ class BackendHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/api/generate-plan':
             payload = read_json_body(self)
-
             answers = payload.get('answers') or []
             prompt = build_prompt(answers)
-            result = generate_plan(prompt)
+            
+            # For local consistency, we use the same logic as the Vercel handler
+            result = generate_plan(prompt) 
             response = json.dumps(result).encode('utf-8')
             self._send_bytes(200, response, 'application/json')
             return

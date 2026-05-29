@@ -63,7 +63,7 @@ class handler(BaseHTTPRequestHandler):
             )
 
             try:
-                with urllib.request.urlopen(req, timeout=30) as response:
+                with urllib.request.urlopen(req, timeout=60) as response:
                     res_body = json.loads(response.read().decode('utf-8'))
                     content = res_body['choices'][0]['message']['content'].strip()
                     result = {'plan': content, 'source': 'provider'}
