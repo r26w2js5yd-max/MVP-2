@@ -12,6 +12,8 @@ HTML_FILE = ROOT / 'index.html'
 ENV_FILE = Path(__file__).resolve().parent / '.env'
 ANALYTICS_FILE = Path(__file__).resolve().parent / 'analytics_events.jsonl'
 ANALYTICS_DASHBOARD = Path(__file__).resolve().parent / 'analytics_dashboard.html'
+EMAILS_FILE = Path(__file__).resolve().parent / 'emails.jsonl'
+EMAILS_DASHBOARD = Path(__file__).resolve().parent / 'emails_dashboard.html'
 
 
 def load_env(file_path: Path) -> None:
@@ -43,6 +45,31 @@ def append_analytics_event(payload):
     ANALYTICS_FILE.parent.mkdir(parents=True, exist_ok=True)
     with ANALYTICS_FILE.open('a', encoding='utf-8') as handle:
         handle.write(json.dumps(payload, ensure_ascii=True) + '\n')
+
+
+def append_email(email_data):
+    """Store a collected email address to the emails file."""
+    EMAILS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with EMAILS_FILE.open('a', encoding='utf-8') as handle:
+        handle.write(json.dumps(email_data, ensure_ascii=True) + '\n')
+
+
+def load_emails():
+    """Load all collected emails from the file."""
+    if not EMAILS_FILE.exists():
+        return []
+    
+    emails = []
+    with EMAILS_FILE.open('r', encoding='utf-8') as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                emails.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return emails
 
 
 def load_analytics_events():
@@ -337,6 +364,22 @@ class BackendHandler(SimpleHTTPRequestHandler):
             self._send_bytes(200, payload, 'application/json')
             return
 
+        if self.path == '/emails':
+            if not EMAILS_DASHBOARD.exists():
+                self._send_bytes(404, b'Not Found', 'text/plain; charset=utf-8')
+                return
+            content = EMAILS_DASHBOARD.read_text(encoding='utf-8')
+            self._send_text(200, content, 'text/html; charset=utf-8')
+            return
+
+        if self.path == '/api/emails':
+            emails = load_emails()
+            # Return emails in reverse order (newest first)
+            emails.reverse()
+            payload = json.dumps({'emails': emails, 'total': len(emails)}).encode('utf-8')
+            self._send_bytes(200, payload, 'application/json')
+            return
+
         if self.path == '/favicon.ico':
             self._send_bytes(404, b'Not Found', 'text/plain; charset=utf-8')
             return
@@ -356,6 +399,25 @@ class BackendHandler(SimpleHTTPRequestHandler):
         if self.path == '/api/track':
             payload = read_json_body(self)
             append_analytics_event(payload)
+            response = json.dumps({'status': 'ok'}).encode('utf-8')
+            self._send_bytes(200, response, 'application/json')
+            return
+
+        if self.path == '/api/collect-email':
+            payload = read_json_body(self)
+            email = payload.get('email', '').strip().lower()
+            if not email or '@' not in email or '.' not in email:
+                response = json.dumps({'status': 'error', 'message': 'Invalid email address'}).encode('utf-8')
+                self._send_bytes(400, response, 'application/json')
+                return
+            
+            email_data = {
+                'email': email,
+                'timestamp': payload.get('timestamp', ''),
+                'session_id': payload.get('session_id', ''),
+                'source': payload.get('source', 'workout_generator')
+            }
+            append_email(email_data)
             response = json.dumps({'status': 'ok'}).encode('utf-8')
             self._send_bytes(200, response, 'application/json')
             return
