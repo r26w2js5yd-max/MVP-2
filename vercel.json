@@ -16,6 +16,14 @@
     {
       "source": "/api/test-env",
       "destination": "/api/test-env.py"
+    },
+    {
+      "source": "/api/analytics-summary",
+      "destination": "/api/analytics-summary.py"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/backend/analytics_dashboard.html"
     }
   ]
 }
