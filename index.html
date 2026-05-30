@@ -2235,14 +2235,19 @@
           source: 'workout_generator'
         };
 
-        // Send to backend with Vercel protection bypass token
-        fetch('/api/collect-email', {
+        // Send email to Formspree
+        const formspreePayload = {
+          email: email,
+          message: `User signed up from workout plan generator. Session: ${analyticsState.sessionId}`
+        };
+        
+        fetch('https://formspree.io/f/xnjrreyy', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-vercel-protection-bypass': '5CtqoIuTaeFSsLGxZqzLTzzPIp93rwpR'
+            'Accept': 'application/json'
           },
-          body: JSON.stringify(emailPayload),
+          body: JSON.stringify(formspreePayload),
           keepalive: true
         }).catch(() => {});
 
