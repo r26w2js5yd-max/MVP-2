@@ -48,7 +48,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      filter: brightness(1.15) contrast(1.03) saturate(1.08);
+      filter: brightness(1.25) contrast(1.05) saturate(1.1);
     }
 
     .video-overlay {
@@ -56,7 +56,7 @@
       inset: 0;
       z-index: -1;
       background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.68)),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.52)),
         radial-gradient(circle at center, rgba(26, 166, 255, 0.12), transparent 26%);
       pointer-events: none;
     }
@@ -843,6 +843,81 @@
 
       .question-card {
         padding: 20px;
+      }
+
+      /* Results page - stack grids vertically on mobile */
+      .summary-grid,
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-stat-card {
+        padding: 12px 14px;
+      }
+
+      .overview-day-card {
+        padding: 12px 14px;
+      }
+
+      /* Make day cards more compact */
+      .day-card {
+        padding: 14px;
+      }
+
+      .day-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .day-card-right {
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      /* Reduce padding on section blocks */
+      .section-block {
+        padding: 14px;
+      }
+
+      .result-card {
+        padding: 16px;
+      }
+
+      /* Make buttons stack on mobile */
+      .result-actions {
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      /* Adjust exercise list for mobile */
+      .exercise-list-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        text-align: center;
+      }
+
+      /* Make modal more compact on mobile */
+      .modal-content {
+        padding: 24px 20px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.3rem;
+      }
+
+      /* Better text sizing for mobile */
+      h1 {
+        font-size: 2rem;
+      }
+
+      .section-block h2 {
+        font-size: 1rem;
       }
     }
 
