@@ -22,6 +22,18 @@
       "destination": "/api/analytics-summary.py"
     },
     {
+      "source": "/api/collect-email",
+      "destination": "/api/collect-email.py"
+    },
+    {
+      "source": "/api/emails",
+      "destination": "/api/emails.py"
+    },
+    {
+      "source": "/emails",
+      "destination": "/backend/emails_dashboard.html"
+    },
+    {
       "source": "/analytics",
       "destination": "/backend/analytics_dashboard.html"
     }
