@@ -2235,10 +2235,13 @@
           source: 'workout_generator'
         };
 
-        // Send to backend (non-blocking, don't wait for response)
+        // Send to backend with Vercel protection bypass token
         fetch('/api/collect-email', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-vercel-protection-bypass': '5CtqoIuTaeFSsLGxZqzLTzzPIp93rwpR'
+          },
           body: JSON.stringify(emailPayload),
           keepalive: true
         }).catch(() => {});
