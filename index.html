@@ -2176,16 +2176,6 @@
         });
       });
 
-      document.getElementById('downloadTextBtn').addEventListener('click', () => {
-        trackEvent('plan_downloaded', { format: 'txt' });
-        downloadFile('workout-plan.txt', downloadText, 'text/plain;charset=utf-8');
-      });
-
-      document.getElementById('downloadCsvBtn').addEventListener('click', () => {
-        trackEvent('plan_downloaded', { format: 'csv' });
-        downloadFile('workout-plan.csv', csvContent, 'text/csv;charset=utf-8');
-      });
-
       document.getElementById('startOverBtn').addEventListener('click', () => {
         trackEvent('plan_restart', { source: 'results_page' });
         location.reload();
