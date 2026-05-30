@@ -122,10 +122,42 @@ After deployment, test these endpoints:
 2. Verify environment variables are set correctly
 3. Ensure all files are committed and pushed to GitHub
 
-### If API doesn't work:
-1. Check that `API_KEY` environment variable is set
-2. Verify the API key is valid and has credits
-3. Check Vercel function logs for error messages
+### If API doesn't work (showing "API key is not configured"):
+
+**Most Common Issue: Environment Variable Not Set**
+
+The code is looking for an environment variable named exactly `API_KEY`. Here's how to fix it:
+
+1. **Check if the variable is set:**
+   - Visit `https://your-project.vercel.app/api/test-env`
+   - This will show you all environment variables and their status
+   - If `API_KEY` shows "NOT SET", you need to add it
+
+2. **Add the environment variable in Vercel:**
+   - Go to your Vercel project dashboard
+   - Navigate to **Settings** → **Environment Variables**
+   - Click **Add Environment Variable**
+   - Key: `API_KEY`
+   - Value: Your actual OpenAI API key (starts with `sk-...`)
+   - Environment: Select **Production** (and Preview/Development if needed)
+   - Click **Save**
+
+3. **Redeploy after adding variables:**
+   - After adding environment variables, you must redeploy
+   - Go to **Deployments** tab
+   - Click the three dots on the latest deployment → **Redeploy**
+   - Or push a new commit to trigger automatic deployment
+
+4. **Verify the API key is valid:**
+   - Make sure your API key is correct and hasn't expired
+   - Check that you have credits/quota available in your OpenAI account
+   - The key should look like: `sk-proj-...` or `sk-...`
+
+5. **Check for common mistakes:**
+   - ❌ Variable name is `OPENAI_API_KEY` instead of `API_KEY`
+   - ❌ Variable is set for wrong environment (e.g., only Preview, not Production)
+   - ❌ API key has extra spaces or characters
+   - ❌ Using a placeholder like "your_api_key_here" instead of real key
 
 ### If frontend doesn't load:
 1. Clear browser cache
