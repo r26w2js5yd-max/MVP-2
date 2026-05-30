@@ -48,7 +48,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      filter: brightness(0.86) contrast(1.03) saturate(1.08);
+      filter: brightness(1.15) contrast(1.03) saturate(1.08);
     }
 
     .video-overlay {
@@ -2226,6 +2226,22 @@
 
         // Store email in session storage
         sessionStorage.setItem('user_email', email);
+
+        // Send email to the server for persistent storage
+        const emailPayload = {
+          email: email,
+          timestamp: new Date().toISOString(),
+          session_id: analyticsState.sessionId,
+          source: 'workout_generator'
+        };
+
+        // Send to backend (non-blocking, don't wait for response)
+        fetch('/api/collect-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(emailPayload),
+          keepalive: true
+        }).catch(() => {});
 
         // Track email signup event
         trackEvent('email_signup', { email_provided: true });
