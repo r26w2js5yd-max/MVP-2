@@ -48,7 +48,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      filter: brightness(1.25) contrast(1.05) saturate(1.1);
+      filter: brightness(1.15) contrast(1.03) saturate(1.08);
     }
 
     .video-overlay {
@@ -853,15 +853,18 @@
 
       .summary-stat-card {
         padding: 12px 14px;
+        background: rgba(10, 16, 24, 0.92);
       }
 
       .overview-day-card {
         padding: 12px 14px;
+        background: rgba(10, 16, 24, 0.92);
       }
 
-      /* Make day cards more compact */
+      /* Make day cards more compact and brighter */
       .day-card {
         padding: 14px;
+        background: linear-gradient(180deg, rgba(12, 18, 28, 0.96), rgba(8, 14, 22, 0.92));
       }
 
       .day-card-header {
@@ -875,13 +878,15 @@
         width: 100%;
       }
 
-      /* Reduce padding on section blocks */
+      /* Reduce padding on section blocks and make them brighter */
       .section-block {
         padding: 14px;
+        background: linear-gradient(180deg, rgba(12, 18, 28, 0.95), rgba(10, 16, 24, 0.9));
       }
 
       .result-card {
         padding: 16px;
+        background: linear-gradient(180deg, rgba(10, 16, 24, 0.94), rgba(6, 12, 20, 0.88));
       }
 
       /* Make buttons stack on mobile */
@@ -900,6 +905,7 @@
         grid-template-columns: 1fr;
         gap: 4px;
         text-align: center;
+        background: rgba(12, 18, 28, 0.92);
       }
 
       /* Make modal more compact on mobile */
@@ -918,6 +924,21 @@
 
       .section-block h2 {
         font-size: 1rem;
+      }
+
+      /* Brighter detail groups on mobile */
+      .detail-group {
+        background: rgba(12, 18, 28, 0.92);
+      }
+
+      /* Brighter progression card */
+      .progression-card {
+        background: rgba(26, 166, 255, 0.15);
+      }
+
+      /* Summary note brighter */
+      .summary-note {
+        background: rgba(26, 166, 255, 0.14);
       }
     }
 
