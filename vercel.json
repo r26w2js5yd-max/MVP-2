@@ -12,6 +12,10 @@
     {
       "source": "/api/track",
       "destination": "/api/track.py"
+    },
+    {
+      "source": "/api/test-env",
+      "destination": "/api/test-env.py"
     }
   ]
 }
